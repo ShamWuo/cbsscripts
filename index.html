@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberPatriot Script Manager</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ CyberPatriot Script Manager</h1>
+            <p class="subtitle">Manage and copy your competition scripts with ease</p>
+        </header>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <button class="btn btn-primary" id="addScriptBtn">
+                    <span>+</span> Add New Script
+                </button>
+
+                <div class="share-section">
+                    <h3>Share & Import</h3>
+                    <button class="btn btn-secondary btn-full" id="exportAllBtn">
+                        📤 Export All Scripts
+                    </button>
+                    <button class="btn btn-secondary btn-full" id="importBtn">
+                        📥 Import Scripts
+                    </button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                </div>
+                
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search scripts...">
+                </div>
+
+                <div class="filter-section">
+                    <h3>Categories</h3>
+                    <div class="category-filters">
+                        <button class="category-btn active" data-category="all">All Scripts</button>
+                        <button class="category-btn" data-category="windows">Windows</button>
+                        <button class="category-btn" data-category="linux">Linux</button>
+                        <button class="category-btn" data-category="security">Security</button>
+                        <button class="category-btn" data-category="network">Network</button>
+                        <button class="category-btn" data-category="other">Other</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scripts-panel">
+                <div id="scriptsList" class="scripts-list">
+                    <!-- Scripts will be dynamically added here -->
+                </div>
+                <div id="emptyState" class="empty-state">
+                    <p>No scripts yet. Click "Add New Script" to get started!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Script Modal -->
+    <div id="scriptModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Script</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <form id="scriptForm">
+                <div class="form-group">
+                    <label for="scriptName">Script Name</label>
+                    <input type="text" id="scriptName" required placeholder="e.g., Windows Firewall Config">
+                </div>
+                
+                <div class="form-group">
+                    <label for="scriptCategory">Category</label>
+                    <select id="scriptCategory" required>
+                        <option value="windows">Windows</option>
+                        <option value="linux">Linux</option>
+                        <option value="security">Security</option>
+                        <option value="network">Network</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="scriptContent">Script Content</label>
+                    <textarea id="scriptContent" rows="15" required placeholder="Paste your script here..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="scriptDescription">Description (Optional)</label>
+                    <textarea id="scriptDescription" rows="3" placeholder="Brief description of what this script does..."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Script</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script View Modal -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="viewScriptName"></h2>
+                <button class="close-btn" id="closeViewModal">&times;</button>
+            </div>
+            <div class="script-view-content">
+                <div class="script-meta">
+                    <span class="category-badge" id="viewCategory"></span>
+                    <span class="description-text" id="viewDescription"></span>
+                </div>
+                <div class="script-actions-bar">
+                    <button class="btn btn-primary" id="copyScriptBtn">
+                        📋 Copy Script
+                    </button>
+                    <button class="btn btn-secondary" id="shareScriptBtn">
+                        🔗 Share Script
+                    </button>
+                    <button class="btn btn-secondary" id="exportScriptBtn">
+                        💾 Export Script
+                    </button>
+                    <button class="btn btn-secondary" id="editScriptBtn">
+                        ✏️ Edit
+                    </button>
+                    <button class="btn btn-danger" id="deleteScriptBtn">
+                        🗑️ Delete
+                    </button>
+                </div>
+                <pre id="viewScriptContent" class="script-content"></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Share Script</h2>
+                <button class="close-btn" id="closeShareModal">&times;</button>
+            </div>
+            <div class="share-content">
+                <p>Share this script with others using one of these methods:</p>
+                
+                <div class="share-option">
+                    <h3>📋 Share Link</h3>
+                    <p class="share-description">Copy this link to share the script. Anyone with the link can import it.</p>
+                    <div class="share-link-box">
+                        <input type="text" id="shareLinkInput" readonly>
+                        <button class="btn btn-primary" id="copyShareLinkBtn">Copy Link</button>
+                    </div>
+                </div>
+
+                <div class="share-option">
+                    <h3>💾 Export as File</h3>
+                    <p class="share-description">Download the script as a JSON file to share via email, USB, etc.</p>
+                    <button class="btn btn-secondary btn-full" id="downloadScriptFileBtn">Download Script File</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
