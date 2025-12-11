@@ -416,9 +416,9 @@ class ScriptManager {
             scriptsList.style.display = 'none';
             emptyState.style.display = 'block';
             if (this.scripts.length === 0) {
-                emptyState.innerHTML = '<p>No scripts yet. Click "Add New Script" to get started!</p>';
+                emptyState.innerHTML = '<p>[SYSTEM] No scripts found. Initialize new script to begin.</p>';
             } else {
-                emptyState.innerHTML = '<p>No scripts match your search or filter criteria.</p>';
+                emptyState.innerHTML = '<p>[WARNING] No scripts match your search or filter criteria.</p>';
             }
             return;
         }

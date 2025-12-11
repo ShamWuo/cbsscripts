@@ -10,8 +10,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>🛡️ CyberPatriot Script Manager</h1>
-            <p class="subtitle">Manage and copy your competition scripts with ease</p>
+            <h1>CyberPatriot Script Manager</h1>
+            <p class="subtitle">[SYSTEM] Script Management Interface Active</p>
         </header>
 
         <div class="main-content">
@@ -23,10 +23,10 @@
                 <div class="share-section">
                     <h3>Share & Import</h3>
                     <button class="btn btn-secondary btn-full" id="exportAllBtn">
-                        📤 Export All Scripts
+                        [EXPORT] Export All Scripts
                     </button>
                     <button class="btn btn-secondary btn-full" id="importBtn">
-                        📥 Import Scripts
+                        [IMPORT] Import Scripts
                     </button>
                     <input type="file" id="importFile" accept=".json" style="display: none;">
                 </div>
@@ -53,7 +53,7 @@
                     <!-- Scripts will be dynamically added here -->
                 </div>
                 <div id="emptyState" class="empty-state">
-                    <p>No scripts yet. Click "Add New Script" to get started!</p>
+                    <p>[SYSTEM] No scripts found. Initialize new script to begin.</p>
                 </div>
             </div>
         </div>
@@ -115,19 +115,19 @@
                 </div>
                 <div class="script-actions-bar">
                     <button class="btn btn-primary" id="copyScriptBtn">
-                        📋 Copy Script
+                        [COPY] Copy Script
                     </button>
                     <button class="btn btn-secondary" id="shareScriptBtn">
-                        🔗 Share Script
+                        [SHARE] Share Script
                     </button>
                     <button class="btn btn-secondary" id="exportScriptBtn">
-                        💾 Export Script
+                        [EXPORT] Export Script
                     </button>
                     <button class="btn btn-secondary" id="editScriptBtn">
-                        ✏️ Edit
+                        [EDIT] Edit
                     </button>
                     <button class="btn btn-danger" id="deleteScriptBtn">
-                        🗑️ Delete
+                        [DELETE] Delete
                     </button>
                 </div>
                 <pre id="viewScriptContent" class="script-content"></pre>
@@ -143,21 +143,21 @@
                 <button class="close-btn" id="closeShareModal">&times;</button>
             </div>
             <div class="share-content">
-                <p>Share this script with others using one of these methods:</p>
+                <p>[INFO] Share this script with others using one of these methods:</p>
                 
                 <div class="share-option">
-                    <h3>📋 Share Link</h3>
-                    <p class="share-description">Copy this link to share the script. Anyone with the link can import it.</p>
+                    <h3>Share Link</h3>
+                    <p class="share-description">[INFO] Copy this link to share the script. Anyone with the link can import it.</p>
                     <div class="share-link-box">
                         <input type="text" id="shareLinkInput" readonly>
-                        <button class="btn btn-primary" id="copyShareLinkBtn">Copy Link</button>
+                        <button class="btn btn-primary" id="copyShareLinkBtn">[COPY] Copy Link</button>
                     </div>
                 </div>
 
                 <div class="share-option">
-                    <h3>💾 Export as File</h3>
-                    <p class="share-description">Download the script as a JSON file to share via email, USB, etc.</p>
-                    <button class="btn btn-secondary btn-full" id="downloadScriptFileBtn">Download Script File</button>
+                    <h3>Export as File</h3>
+                    <p class="share-description">[INFO] Download the script as a JSON file to share via email, USB, etc.</p>
+                    <button class="btn btn-secondary btn-full" id="downloadScriptFileBtn">[DOWNLOAD] Download Script File</button>
                 </div>
             </div>
         </div>
