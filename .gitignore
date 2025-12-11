@@ -1,0 +1,18 @@
+# Config files with sensitive data
+# Note: config.js template is committed, but if you add real API keys,
+# consider adding config.js here or using environment variables
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+

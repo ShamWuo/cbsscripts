@@ -5,10 +5,12 @@ A modern web application for managing and organizing scripts for CyberPatriot co
 ## Features
 
 - ✅ **Add Custom Scripts**: Create and save your own scripts with categories
+- 🌐 **Shared Database**: Everyone can see scripts added by anyone (with Supabase setup)
+- 🔄 **Real-time Updates**: See new scripts appear automatically as teammates add them
 - 📋 **One-Click Copy**: Copy scripts to clipboard with a single click
 - 🔍 **Search Functionality**: Quickly find scripts by name or content
 - 🏷️ **Category Organization**: Organize scripts by Windows, Linux, Security, Network, or Other
-- 💾 **Local Storage**: All scripts are saved locally in your browser
+- 💾 **Local Storage Fallback**: Works offline with local storage if Supabase isn't configured
 - 📱 **Responsive Design**: Works on desktop, tablet, and mobile devices
 - 🎨 **Modern UI**: Clean, intuitive interface designed for efficiency
 - 🔗 **Share Scripts**: Share scripts with teammates via shareable links or export files
@@ -45,12 +47,30 @@ A modern web application for managing and organizing scripts for CyberPatriot co
 - **Network**: Network configuration and troubleshooting scripts
 - **Other**: Miscellaneous scripts
 
+## Setup
+
+### Quick Start (Local Storage Only)
+1. Open `index.html` in your browser
+2. Start adding scripts - they'll be saved locally
+
+### Shared Database Setup (Recommended for Teams)
+To enable shared scripts where everyone can see each other's scripts:
+
+1. **Set up Supabase** (free, takes ~5 minutes)
+   - See [SETUP.md](SETUP.md) for detailed instructions
+   - Create a free Supabase account
+   - Create the database table
+   - Add your API keys to `config.js`
+
+2. **That's it!** Once configured, all scripts are shared automatically
+
 ## Technical Details
 
-- Pure HTML, CSS, and JavaScript (no dependencies)
-- Uses localStorage for data persistence
-- Works offline after initial load
-- No server required - runs entirely in the browser
+- Pure HTML, CSS, and JavaScript
+- **With Supabase**: Shared database, real-time updates, everyone sees all scripts
+- **Without Supabase**: Falls back to localStorage (local only)
+- Works offline (with localStorage fallback)
+- No build process required - just open and use!
 
 ## Browser Compatibility
 
@@ -75,13 +95,18 @@ Works in all modern browsers:
 
 ## Data Storage
 
-All scripts are stored locally in your browser's localStorage. This means:
-- Your data stays on your device
-- No account or internet connection required
-- Data persists between browser sessions
+### With Supabase (Recommended)
+- All scripts are stored in a shared Supabase database
+- Everyone on your team can see all scripts
+- Real-time updates - new scripts appear automatically
+- Free tier includes 500 MB storage (plenty for scripts!)
+
+### Without Supabase (Fallback)
+- Scripts are stored locally in your browser's localStorage
+- Only you can see your scripts
+- No internet connection required
 - To backup: Use the "Export All Scripts" feature
 - To restore: Use the "Import Scripts" feature
-- To clear: Clear your browser's localStorage
 
 ## Tips for CyberPatriot Competitions
 

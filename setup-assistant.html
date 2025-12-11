@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Setup Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .step h2 {
+            display: inline-block;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .step p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #5568d3;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .config-form {
+            background: #fff;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            border-left: 4px solid #0c5460;
+            color: #0c5460;
+        }
+        .alert-success {
+            background: #d4edda;
+            border-left: 4px solid #155724;
+            color: #155724;
+        }
+        .copy-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        .copy-btn:hover {
+            background: #218838;
+        }
+        .test-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Supabase Setup Assistant</h1>
+        <p class="subtitle">Follow these steps to enable shared scripts for your team</p>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <h2>Create Supabase Account</h2>
+            <p>Go to Supabase and create a free account:</p>
+            <a href="https://supabase.com" target="_blank" class="btn">Go to Supabase →</a>
+            <div class="alert alert-info" style="margin-top: 15px;">
+                <strong>Note:</strong> No credit card required! The free tier is perfect for CyberPatriot teams.
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <h2>Create a New Project</h2>
+            <p>After signing up:</p>
+            <ol style="margin-left: 20px; color: #666; line-height: 2;">
+                <li>Click "New Project"</li>
+                <li>Choose a project name (e.g., "cyberpatriot-scripts")</li>
+                <li>Set a database password (save this password!)</li>
+                <li>Choose a region close to you</li>
+                <li>Click "Create new project"</li>
+            </ol>
+            <div class="alert alert-info" style="margin-top: 15px;">
+                <strong>Wait time:</strong> Project creation takes about 2 minutes. Grab a coffee! ☕
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <h2>Get Your API Keys</h2>
+            <p>Once your project is ready:</p>
+            <ol style="margin-left: 20px; color: #666; line-height: 2;">
+                <li>In your project dashboard, click the <strong>Settings</strong> icon (⚙️) in the left sidebar</li>
+                <li>Click <strong>API</strong> in the settings menu</li>
+                <li>Find these two values:</li>
+            </ol>
+            <div class="config-form">
+                <div class="form-group">
+                    <label>Project URL</label>
+                    <input type="text" id="supabaseUrl" placeholder="https://xxxxx.supabase.co">
+                    <p style="font-size: 0.85rem; color: #666; margin-top: 5px;">Found under "Project URL"</p>
+                </div>
+                <div class="form-group">
+                    <label>Anon Public Key</label>
+                    <input type="text" id="supabaseKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                    <p style="font-size: 0.85rem; color: #666; margin-top: 5px;">Found under "Project API keys" → "anon public"</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">4</span>
+            <h2>Create the Database Table</h2>
+            <p>In your Supabase dashboard:</p>
+            <ol style="margin-left: 20px; color: #666; line-height: 2;">
+                <li>Click <strong>SQL Editor</strong> in the left sidebar</li>
+                <li>Click <strong>New Query</strong></li>
+                <li>Copy and paste the SQL code below</li>
+                <li>Click <strong>Run</strong> (or press Ctrl+Enter)</li>
+            </ol>
+            <div class="code-block" id="sqlCode">
+-- Create the scripts table
+CREATE TABLE IF NOT EXISTS scripts (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    content TEXT NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable Row Level Security (RLS)
+ALTER TABLE scripts ENABLE ROW LEVEL SECURITY;
+
+-- Create a policy that allows anyone to read scripts
+CREATE POLICY "Anyone can read scripts"
+    ON scripts FOR SELECT
+    USING (true);
+
+-- Create a policy that allows anyone to insert scripts
+CREATE POLICY "Anyone can insert scripts"
+    ON scripts FOR INSERT
+    WITH CHECK (true);
+
+-- Create a policy that allows anyone to update scripts
+CREATE POLICY "Anyone can update scripts"
+    ON scripts FOR UPDATE
+    USING (true);
+
+-- Create a policy that allows anyone to delete scripts
+CREATE POLICY "Anyone can delete scripts"
+    ON scripts FOR DELETE
+    USING (true);
+
+-- Create a function to automatically update updated_at
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Create a trigger to automatically update updated_at
+CREATE TRIGGER update_scripts_updated_at
+    BEFORE UPDATE ON scripts
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+            </div>
+            <button class="copy-btn" onclick="copySQL()">📋 Copy SQL Code</button>
+        </div>
+
+        <div class="step">
+            <span class="step-number">5</span>
+            <h2>Enable Realtime (Optional but Recommended)</h2>
+            <p>This allows everyone to see new scripts instantly:</p>
+            <ol style="margin-left: 20px; color: #666; line-height: 2;">
+                <li>In your Supabase dashboard, click <strong>Database</strong> → <strong>Replication</strong></li>
+                <li>Find the <code>scripts</code> table in the list</li>
+                <li>Toggle the switch to enable replication</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <span class="step-number">6</span>
+            <h2>Configure the App</h2>
+            <p>Enter your API keys above, then click the button below to update config.js:</p>
+            <button class="btn" onclick="updateConfig()">💾 Save Configuration</button>
+            <div id="configResult" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🧪 Test Your Connection</h2>
+            <p>After saving your configuration, test if everything works:</p>
+            <button class="btn btn-secondary" onclick="testConnection()">Test Connection</button>
+            <div id="testResult" style="margin-top: 15px;"></div>
+        </div>
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #e2e8f0; text-align: center;">
+            <p style="color: #666;">Once configured, open <a href="index.html" style="color: #667eea;">index.html</a> to start using the app!</p>
+        </div>
+    </div>
+
+    <script>
+        function copySQL() {
+            const code = document.getElementById('sqlCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('SQL code copied to clipboard!');
+            });
+        }
+
+        function updateConfig() {
+            const url = document.getElementById('supabaseUrl').value.trim();
+            const key = document.getElementById('supabaseKey').value.trim();
+
+            if (!url || !key) {
+                alert('Please enter both your Supabase URL and API key!');
+                return;
+            }
+
+            if (!url.startsWith('https://') || !url.includes('.supabase.co')) {
+                alert('Please enter a valid Supabase URL (should start with https:// and contain .supabase.co)');
+                return;
+            }
+
+            if (!key.startsWith('eyJ')) {
+                alert('Please enter a valid API key (should start with eyJ)');
+                return;
+            }
+
+            // Create the config file content
+            const configContent = `// Supabase Configuration
+// Get these values from your Supabase project: https://supabase.com/dashboard
+// 
+// SETUP INSTRUCTIONS:
+// 1. Go to https://supabase.com and create a free account
+// 2. Create a new project
+// 3. Go to Project Settings > API
+// 4. Copy your "Project URL" and "anon public" key
+// 5. Replace the values below
+
+const SUPABASE_CONFIG = {
+    url: '${url}',
+    anonKey: '${key}'
+};
+
+// Initialize Supabase client
+let supabase;
+if (SUPABASE_CONFIG.url !== 'YOUR_SUPABASE_URL' && SUPABASE_CONFIG.anonKey !== 'YOUR_SUPABASE_ANON_KEY') {
+    supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+} else {
+    console.warn('Supabase not configured. Please set up your credentials in config.js');
+    supabase = null;
+}
+`;
+
+            // Create a download link
+            const blob = new Blob([configContent], { type: 'text/javascript' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'config.js';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            document.getElementById('configResult').innerHTML = 
+                '<div class="alert alert-success"><strong>Success!</strong> config.js file downloaded. Replace the existing config.js file in your project folder with this one.</div>';
+        }
+
+        async function testConnection() {
+            const url = document.getElementById('supabaseUrl').value.trim();
+            const key = document.getElementById('supabaseKey').value.trim();
+
+            if (!url || !key) {
+                document.getElementById('testResult').innerHTML = 
+                    '<div class="alert alert-info">Please enter your API keys first!</div>';
+                return;
+            }
+
+            document.getElementById('testResult').innerHTML = 
+                '<div class="alert alert-info">Testing connection...</div>';
+
+            try {
+                // Load Supabase SDK
+                if (!window.supabase) {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+                    document.head.appendChild(script);
+                    await new Promise((resolve) => {
+                        script.onload = resolve;
+                    });
+                }
+
+                const testClient = window.supabase.createClient(url, key);
+                const { data, error } = await testClient.from('scripts').select('count').limit(1);
+
+                if (error) {
+                    if (error.message.includes('relation "scripts" does not exist')) {
+                        document.getElementById('testResult').innerHTML = 
+                            '<div class="alert alert-info"><strong>Connection works!</strong> But the scripts table doesn\'t exist yet. Make sure you ran the SQL code in Step 4.</div>';
+                    } else {
+                        document.getElementById('testResult').innerHTML = 
+                            `<div class="alert alert-info"><strong>Error:</strong> ${error.message}</div>`;
+                    }
+                } else {
+                    document.getElementById('testResult').innerHTML = 
+                        '<div class="alert alert-success"><strong>✅ Success!</strong> Connection to Supabase is working! Your configuration is correct.</div>';
+                }
+            } catch (error) {
+                document.getElementById('testResult').innerHTML = 
+                    `<div class="alert alert-info"><strong>Error:</strong> ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
+

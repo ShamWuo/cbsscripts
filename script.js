@@ -1,14 +1,24 @@
 // Script Manager Application
 class ScriptManager {
     constructor() {
-        this.scripts = this.loadScripts();
+        this.scripts = [];
         this.currentEditingId = null;
         this.currentViewingId = null;
         this.currentCategory = 'all';
         this.searchTerm = '';
+        this.useSupabase = supabase !== null;
+        this.realtimeSubscription = null;
         
         this.initializeEventListeners();
+        this.init();
+    }
+
+    async init() {
+        this.showLoading(true);
+        await this.loadScripts();
         this.renderScripts();
+        this.showLoading(false);
+        this.setupRealtime();
     }
 
     initializeEventListeners() {
@@ -124,13 +134,53 @@ class ScriptManager {
         this.checkForSharedScript();
     }
 
-    loadScripts() {
+    async loadScripts() {
+        if (this.useSupabase) {
+            try {
+                const { data, error } = await supabase
+                    .from('scripts')
+                    .select('*')
+                    .order('updated_at', { ascending: false });
+
+                if (error) {
+                    console.error('Error loading scripts:', error);
+                    this.showToast('Error loading scripts. Using local storage.', 'error');
+                    this.useSupabase = false;
+                    this.scripts = this.loadScriptsLocal();
+                } else {
+                    this.scripts = data.map(script => ({
+                        id: script.id,
+                        name: script.name,
+                        category: script.category,
+                        content: script.content,
+                        description: script.description || '',
+                        createdAt: script.created_at,
+                        updatedAt: script.updated_at
+                    }));
+                }
+            } catch (error) {
+                console.error('Error connecting to Supabase:', error);
+                this.showToast('Connection error. Using local storage.', 'error');
+                this.useSupabase = false;
+                this.scripts = this.loadScriptsLocal();
+            }
+        } else {
+            this.scripts = this.loadScriptsLocal();
+        }
+    }
+
+    loadScriptsLocal() {
         const stored = localStorage.getItem('cyberpatriotScripts');
         return stored ? JSON.parse(stored) : [];
     }
 
-    saveScripts() {
-        localStorage.setItem('cyberpatriotScripts', JSON.stringify(this.scripts));
+    async saveScripts() {
+        if (this.useSupabase) {
+            // Supabase saves happen individually, so this is mainly for local fallback
+            return;
+        } else {
+            localStorage.setItem('cyberpatriotScripts', JSON.stringify(this.scripts));
+        }
     }
 
     generateId() {
@@ -168,7 +218,7 @@ class ScriptManager {
         this.currentViewingId = null;
     }
 
-    saveScript() {
+    async saveScript() {
         const name = document.getElementById('scriptName').value.trim();
         const category = document.getElementById('scriptCategory').value;
         const content = document.getElementById('scriptContent').value.trim();
@@ -179,38 +229,86 @@ class ScriptManager {
             return;
         }
 
-        if (this.currentEditingId) {
-            // Update existing script
-            const index = this.scripts.findIndex(s => s.id === this.currentEditingId);
-            if (index !== -1) {
-                this.scripts[index] = {
-                    ...this.scripts[index],
-                    name,
-                    category,
-                    content,
-                    description,
-                    updatedAt: new Date().toISOString()
-                };
-                this.showToast('Script updated successfully!');
-            }
-        } else {
-            // Add new script
-            const newScript = {
-                id: this.generateId(),
-                name,
-                category,
-                content,
-                description,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            };
-            this.scripts.push(newScript);
-            this.showToast('Script added successfully!');
-        }
+        this.showLoading(true);
 
-        this.saveScripts();
-        this.closeModal();
-        this.renderScripts();
+        try {
+            if (this.currentEditingId) {
+                // Update existing script
+                if (this.useSupabase) {
+                    const { data, error } = await supabase
+                        .from('scripts')
+                        .update({
+                            name,
+                            category,
+                            content,
+                            description,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('id', this.currentEditingId)
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+                    this.showToast('Script updated successfully!');
+                } else {
+                    const index = this.scripts.findIndex(s => s.id === this.currentEditingId);
+                    if (index !== -1) {
+                        this.scripts[index] = {
+                            ...this.scripts[index],
+                            name,
+                            category,
+                            content,
+                            description,
+                            updatedAt: new Date().toISOString()
+                        };
+                        this.saveScripts();
+                        this.showToast('Script updated successfully!');
+                    }
+                }
+            } else {
+                // Add new script
+                if (this.useSupabase) {
+                    const { data, error } = await supabase
+                        .from('scripts')
+                        .insert([{
+                            name,
+                            category,
+                            content,
+                            description,
+                            created_at: new Date().toISOString(),
+                            updated_at: new Date().toISOString()
+                        }])
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+                    this.showToast('Script added successfully! Everyone can see it now!');
+                } else {
+                    const newScript = {
+                        id: this.generateId(),
+                        name,
+                        category,
+                        content,
+                        description,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+                    this.scripts.push(newScript);
+                    this.saveScripts();
+                    this.showToast('Script added successfully!');
+                }
+            }
+
+            // Reload scripts to get latest from database
+            await this.loadScripts();
+            this.renderScripts();
+            this.closeModal();
+        } catch (error) {
+            console.error('Error saving script:', error);
+            this.showToast('Error saving script. Please try again.', 'error');
+        } finally {
+            this.showLoading(false);
+        }
     }
 
     editScript() {
@@ -232,15 +330,35 @@ class ScriptManager {
         document.getElementById('scriptModal').classList.add('show');
     }
 
-    deleteScript() {
+    async deleteScript() {
         if (!this.currentViewingId) return;
 
         if (confirm('Are you sure you want to delete this script? This action cannot be undone.')) {
-            this.scripts = this.scripts.filter(s => s.id !== this.currentViewingId);
-            this.saveScripts();
-            this.closeViewModal();
-            this.renderScripts();
-            this.showToast('Script deleted successfully!');
+            this.showLoading(true);
+            try {
+                if (this.useSupabase) {
+                    const { error } = await supabase
+                        .from('scripts')
+                        .delete()
+                        .eq('id', this.currentViewingId);
+
+                    if (error) throw error;
+                    this.showToast('Script deleted successfully!');
+                } else {
+                    this.scripts = this.scripts.filter(s => s.id !== this.currentViewingId);
+                    this.saveScripts();
+                    this.showToast('Script deleted successfully!');
+                }
+
+                await this.loadScripts();
+                this.renderScripts();
+                this.closeViewModal();
+            } catch (error) {
+                console.error('Error deleting script:', error);
+                this.showToast('Error deleting script. Please try again.', 'error');
+            } finally {
+                this.showLoading(false);
+            }
         }
     }
 
@@ -363,12 +481,13 @@ class ScriptManager {
         this.showToast(`Exported ${this.scripts.length} script(s) successfully!`);
     }
 
-    importScripts(event) {
+    async importScripts(event) {
         const file = event.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
+            this.showLoading(true);
             try {
                 const importedScripts = JSON.parse(e.target.result);
                 
@@ -387,22 +506,47 @@ class ScriptManager {
                     return;
                 }
 
-                // Generate new IDs for imported scripts to avoid conflicts
-                validScripts.forEach(script => {
-                    script.id = this.generateId();
-                    script.createdAt = script.createdAt || new Date().toISOString();
-                    script.updatedAt = new Date().toISOString();
-                });
+                if (this.useSupabase) {
+                    // Prepare scripts for Supabase
+                    const scriptsToInsert = validScripts.map(script => ({
+                        name: script.name,
+                        category: script.category,
+                        content: script.content,
+                        description: script.description || '',
+                        created_at: script.createdAt || new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    }));
 
-                // Add imported scripts
-                this.scripts.push(...validScripts);
-                this.saveScripts();
-                this.renderScripts();
-                
-                this.showToast(`Imported ${validScripts.length} script(s) successfully!`);
+                    const { error } = await supabase
+                        .from('scripts')
+                        .insert(scriptsToInsert);
+
+                    if (error) throw error;
+                    this.showToast(`Imported ${validScripts.length} script(s) successfully! Everyone can see them now!`);
+                    
+                    // Reload scripts
+                    await this.loadScripts();
+                    this.renderScripts();
+                } else {
+                    // Generate new IDs for imported scripts to avoid conflicts
+                    validScripts.forEach(script => {
+                        script.id = this.generateId();
+                        script.createdAt = script.createdAt || new Date().toISOString();
+                        script.updatedAt = new Date().toISOString();
+                    });
+
+                    // Add imported scripts
+                    this.scripts.push(...validScripts);
+                    this.saveScripts();
+                    this.renderScripts();
+                    
+                    this.showToast(`Imported ${validScripts.length} script(s) successfully!`);
+                }
             } catch (error) {
                 this.showToast('Error reading file. Please check the file format.', 'error');
                 console.error('Import error:', error);
+            } finally {
+                this.showLoading(false);
             }
         };
 
@@ -483,6 +627,34 @@ class ScriptManager {
         this.closeShareModal();
     }
 
+    setupRealtime() {
+        if (!this.useSupabase) return;
+
+        // Subscribe to changes in the scripts table
+        this.realtimeSubscription = supabase
+            .channel('scripts-changes')
+            .on('postgres_changes', 
+                { event: '*', schema: 'public', table: 'scripts' },
+                async (payload) => {
+                    console.log('Script changed:', payload);
+                    // Reload scripts when any change occurs
+                    await this.loadScripts();
+                    this.renderScripts();
+                    if (payload.eventType === 'INSERT') {
+                        this.showToast('New script added by someone!', 'success');
+                    }
+                }
+            )
+            .subscribe();
+    }
+
+    showLoading(show) {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+            overlay.style.display = show ? 'flex' : 'none';
+        }
+    }
+
     checkForSharedScript() {
         const urlParams = new URLSearchParams(window.location.search);
         const shareData = urlParams.get('share');
@@ -494,29 +666,59 @@ class ScriptManager {
                 if (scriptData.name && scriptData.content) {
                     // Ask user if they want to import
                     if (confirm(`Would you like to import the shared script "${scriptData.name}"?`)) {
-                        const newScript = {
-                            id: this.generateId(),
-                            name: scriptData.name,
-                            category: scriptData.category || 'other',
-                            content: scriptData.content,
-                            description: scriptData.description || '',
-                            createdAt: new Date().toISOString(),
-                            updatedAt: new Date().toISOString()
-                        };
-                        
-                        this.scripts.push(newScript);
-                        this.saveScripts();
-                        this.renderScripts();
-                        this.showToast('Shared script imported successfully!');
-                        
-                        // Clean URL
-                        window.history.replaceState({}, document.title, window.location.pathname);
+                        this.importSharedScript(scriptData);
                     }
                 }
             } catch (error) {
                 console.error('Error parsing shared script:', error);
                 this.showToast('Invalid share link', 'error');
             }
+        }
+    }
+
+    async importSharedScript(scriptData) {
+        this.showLoading(true);
+        try {
+            if (this.useSupabase) {
+                const { error } = await supabase
+                    .from('scripts')
+                    .insert([{
+                        name: scriptData.name,
+                        category: scriptData.category || 'other',
+                        content: scriptData.content,
+                        description: scriptData.description || '',
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    }]);
+
+                if (error) throw error;
+                this.showToast('Shared script imported successfully!');
+            } else {
+                const newScript = {
+                    id: this.generateId(),
+                    name: scriptData.name,
+                    category: scriptData.category || 'other',
+                    content: scriptData.content,
+                    description: scriptData.description || '',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                this.scripts.push(newScript);
+                this.saveScripts();
+                this.showToast('Shared script imported successfully!');
+            }
+
+            await this.loadScripts();
+            this.renderScripts();
+            
+            // Clean URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (error) {
+            console.error('Error importing script:', error);
+            this.showToast('Error importing script. Please try again.', 'error');
+        } finally {
+            this.showLoading(false);
         }
     }
 }
